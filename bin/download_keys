@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -e
+
+export AWS_PAGER=""
+
+pushd "$(git rev-parse --show-toplevel)"
+
+getPrivateKey() {
+    local name=$1
+    aws ssm get-parameter \
+        --name "/example/dev/${name}_private_key" \
+        --with-decryption \
+        --output text \
+        --query Parameter.Value > "keys/$name.pem"
+}
+
+getPrivateKey ca
+getPrivateKey client

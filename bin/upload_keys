@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -e
+
+export AWS_PAGER=""
+
+pushd "$(git rev-parse --show-toplevel)"
+
+uploadPrivateKey() {
+    local name=$1
+    aws ssm put-parameter \
+        --name "/example/dev/${name}_private_key" \
+        --type SecureString\
+        --key-id alias/example-dev-ca \
+        --overwrite \
+        --value file://keys/${name}.pem
+}
+
+uploadPrivateKey ca
+uploadPrivateKey client
